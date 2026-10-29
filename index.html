@@ -545,7 +545,7 @@ $('pause').onclick=e=>{e.stopPropagation();togglePause()};window.musicPaused=()=
 $('help').onclick=e=>{e.stopPropagation();const wasP=paused;if(!paused&&state!='title')togglePause();panel(`<h2>🔴 Larry’s Laser Engraving</h2><p>Customers bring a picture and a material. Your job: dial in the laser so it comes out beautiful.</p>
 <h3>The settings</h3><p>• <b>Power %</b> — how hot the beam is.<br>• <b>Speed</b> — how fast the head moves (mm/s). Slower = more energy into each spot.<br>• <b>Energy ≈ power ÷ speed.</b> Too little looks faint; too much chars, melts, cracks or burns through — and can start a flare-up!<br>• <b>Focus</b> — 0 mm is sharpest. Out of focus = blurry and weaker. (Glass likes a little defocus.)<br>• <b>Passes</b> — each pass adds more. Thick cuts may need 2–3.<br>• <b>Air assist</b> (upgrade) — fewer flare-ups and cleaner cuts. But turn it off for leather engraving!</p>
 <h3>Tips</h3><p>🧪 <b>Test cards</b> burn a grid of power/speed swatches ($1, 5 min) so you can see what works. 📒 Your <b>notebook</b> remembers settings that earned an A. 📖 The <b>settings binder</b> lists real published starting points.</p>
-<h3>Getting paid</h3><p>A–F grade sets the pay; great work earns tips and ★ reputation (bigger pay). ⏰ Rush orders pay 50% more if finished on time. Meet the day’s goal to unlock the next day. ★★★ = every job an A, none late.</p>`,()=>{if(!wasP&&paused)togglePause()})};
+<h3>Getting paid</h3><p>A–F grade sets the pay; great work earns tips and ★ reputation (bigger pay). ⏰ Rush orders pay 50% more if finished on time. Meet the day’s goal to unlock the next day. ★★★ = every job an A, none late.</p><h3 class="gp-help">🎮 Controller</h3><p class="gp-help">Setup: D-pad ◀ ▶ power, ▲ ▼ speed, X fires the laser; stick moves the pointer and A taps cards and buttons (LB / RB jump between buttons). Y fast-forwards while engraving. Start pause, Select mute. Menus: D-pad to pick, A to select, B to go back.</p>`,()=>{if(!wasP&&paused)togglePause()})};
 // ===================== LOOP =====================
 let lastT=0;function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-lastT)/1000||0);lastT=now;if(!paused&&!panelOpen)update(dt);render()}
 resizeCanvas();chrome(true);
@@ -842,4 +842,22 @@ window.__unlock={unlocked:un,sample:window.__SAMPLE||null,get badge(){return las
 #palbList li{min-height:30px;height:auto!important;font-size:16px!important}
 .tb{width:46px!important;height:46px!important}#mute{right:55px!important}#help{right:104px!important}
 </style>
+<!-- gamepad:start -->
+<script src="gamepad.js?v=1"></script>
+<script>
+(function(){if(typeof btn==='function'){var _b=btn;btn=function(x,y,w,h,label){var n=menuBtns.length,r=_b.apply(this,arguments);if(menuBtns.length>n&&typeof label==='string')menuBtns[menuBtns.length-1].label=label;return r}}})();
+GamepadSupport.init({
+ keys:{start:'KeyP',back:'KeyM',left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',x:'Enter',y:'KeyF'},
+ menuKeys:{a:'Enter'},
+ noRepeat:['a','b','x','y','lb','rb','start','back'],
+ ignoreSel:'#dock,#mute,#pause,#help,#inst,#ios,.tb,#dockHint',
+ backSel:'#pclose',
+ menu:function(){var ov=!!document.querySelector('#palbOv.on,#smpLock.on');return ov||panelOpen||paused||state!=='run';},
+ cursor:function(){return !document.querySelector('#palbOv.on,#smpLock.on')&&!panelOpen&&!paused&&state==='setup';},
+ cursorDpadKeys:true,
+ items:GamepadSupport.list(function(){return (document.querySelector('#palbOv.on,#smpLock.on')||panelOpen)?[]:menuBtns;},{scale:function(){return SC},origin:function(){return [OXs,OYs]}}),
+ back:function(){if(document.querySelector('#palbOv.on,#smpLock.on')||panelOpen)return false;var b=menuBtns.filter(function(x){return /^\W*(back|close|menu|done|✕|×)\W*$/i.test(x.label||'')})[0];if(b){b.fn();return true}return false;}
+});
+</script>
+<!-- gamepad:end -->
 </body></html>
